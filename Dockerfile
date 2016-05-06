@@ -1,19 +1,16 @@
-FROM sameersbn/ubuntu:14.04.20160504
-MAINTAINER sameer@damagehead.com
+FROM centos
+MAINTAINER openshift-qe
 
 ENV SQUID_VERSION=3.3.8 \
-    SQUID_CACHE_DIR=/var/spool/squid3 \
-    SQUID_LOG_DIR=/var/log/squid3 \
+    SQUID_CACHE_DIR=/var/spool/squid \
+    SQUID_LOG_DIR=/var/log/squid \
     SQUID_USER=proxy
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 80F70E11F0F0D5F10CB20E62F5DA5F09C3173AA6 \
- && echo "deb http://ppa.launchpad.net/brightbox/squid-ssl/ubuntu trusty main" >> /etc/apt/sources.list \
- && apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y squid3-ssl=${SQUID_VERSION}* \
- && mv /etc/squid3/squid.conf /etc/squid3/squid.conf.dist \
- && rm -rf /var/lib/apt/lists/*
-
-COPY squid.conf /etc/squid3/squid.conf
+RUN yum install -y squid
+RUN chmod -R 777 /var/spool/squid
+RUN chmod -R 777 /var/log/squid
+RUN chmod 777 /etc/squid/squid.conf
+RUN chmod -R 777 /var/run
 COPY entrypoint.sh /sbin/entrypoint.sh
 RUN chmod 755 /sbin/entrypoint.sh
 
